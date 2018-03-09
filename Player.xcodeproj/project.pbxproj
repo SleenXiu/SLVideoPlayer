@@ -17,6 +17,8 @@
 		B13D0CC120525B1300642DA0 /* PlayerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = B13D0CC020525B1300642DA0 /* PlayerUITests.m */; };
 		B13D0CD220525BA500642DA0 /* SLVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = B13D0CD020525BA500642DA0 /* SLVideoPlayer.m */; };
 		B13D0CD320525BA500642DA0 /* SLVideoPlayer.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B13D0CD120525BA500642DA0 /* SLVideoPlayer.bundle */; };
+		B13D0CD62052648B00642DA0 /* SLVideoPlayerToolBar.m in Sources */ = {isa = PBXBuildFile; fileRef = B13D0CD52052648B00642DA0 /* SLVideoPlayerToolBar.m */; };
+		B13D0CD92052662F00642DA0 /* SLVideoPlayerUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = B13D0CD82052662F00642DA0 /* SLVideoPlayerUtil.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +58,10 @@
 		B13D0CCF20525BA500642DA0 /* SLVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLVideoPlayer.h; sourceTree = "<group>"; };
 		B13D0CD020525BA500642DA0 /* SLVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLVideoPlayer.m; sourceTree = "<group>"; };
 		B13D0CD120525BA500642DA0 /* SLVideoPlayer.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SLVideoPlayer.bundle; sourceTree = "<group>"; };
+		B13D0CD42052648B00642DA0 /* SLVideoPlayerToolBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLVideoPlayerToolBar.h; sourceTree = "<group>"; };
+		B13D0CD52052648B00642DA0 /* SLVideoPlayerToolBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLVideoPlayerToolBar.m; sourceTree = "<group>"; };
+		B13D0CD72052662F00642DA0 /* SLVideoPlayerUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLVideoPlayerUtil.h; sourceTree = "<group>"; };
+		B13D0CD82052662F00642DA0 /* SLVideoPlayerUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLVideoPlayerUtil.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +149,10 @@
 			children = (
 				B13D0CCF20525BA500642DA0 /* SLVideoPlayer.h */,
 				B13D0CD020525BA500642DA0 /* SLVideoPlayer.m */,
+				B13D0CD42052648B00642DA0 /* SLVideoPlayerToolBar.h */,
+				B13D0CD52052648B00642DA0 /* SLVideoPlayerToolBar.m */,
+				B13D0CD72052662F00642DA0 /* SLVideoPlayerUtil.h */,
+				B13D0CD82052662F00642DA0 /* SLVideoPlayerUtil.m */,
 				B13D0CD120525BA500642DA0 /* SLVideoPlayer.bundle */,
 			);
 			path = SLVideoPlayer;
@@ -388,6 +398,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B13D0CA120525B1300642DA0 /* ViewController.m in Sources */,
+				B13D0CD92052662F00642DA0 /* SLVideoPlayerUtil.m in Sources */,
+				B13D0CD62052648B00642DA0 /* SLVideoPlayerToolBar.m in Sources */,
 				B13D0CD220525BA500642DA0 /* SLVideoPlayer.m in Sources */,
 				B13D0CAC20525B1300642DA0 /* main.m in Sources */,
 				B13D0C9E20525B1300642DA0 /* AppDelegate.m in Sources */,

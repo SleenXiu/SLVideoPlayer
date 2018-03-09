@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SLVideoPlayerToolBar.h"
 @import AVFoundation;
 
 typedef void (^fullScreenClickBlock)(UIButton *fullScreenBtn);
@@ -31,6 +32,7 @@ typedef NS_ENUM(NSUInteger, SLVideoViewShowType) {
 @property (nonatomic, strong) AVPlayerItem *playerItem;
 
 /** 底部工具栏 */
+@property (nonatomic, strong) SLVideoPlayerToolBar *toolBarView;
 @property (nonatomic, strong) UIView *toolView;
 @property (nonatomic, strong) UIProgressView *bufferProgress;    ///< 缓冲进度条
 @property (nonatomic, strong) UISlider *progressSlider;  ///< 播放进度条

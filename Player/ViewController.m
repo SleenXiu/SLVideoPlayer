@@ -9,8 +9,9 @@
 #import "ViewController.h"
 
 #import "SLVideoPlayer.h"
-@interface ViewController ()
-
+#import "SLVideoPlayerToolBar.h"
+@interface ViewController () <SLVideoPlayerToolBarDelegate>
+@property (nonatomic, weak) SLVideoPlayerToolBar *t;
 @end
 
 @implementation ViewController
@@ -19,6 +20,18 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
+//    SLVideoPlayerToolBar *t = [[SLVideoPlayerToolBar alloc] init];
+//    t.frame = CGRectMake((self.view.frame.size.width-320)*0.5, 200, 320, 24);
+//    [t layoutIfNeeded];
+//    t.delegate = self;
+//    [self.view addSubview:t];
+//    self.t = t;
+    [self haha];
+}
+- (void)barFullScreenButtonClick:(UIButton *)fullScreenButton {
+    
+}
+- (void)haha {
     SLVideoPlayer *player = [[SLVideoPlayer alloc] init];
     player.frame = CGRectMake((self.view.frame.size.width-320)*0.5, 200, 320, 240);
     [player updateWidgetsShow];
@@ -83,7 +96,7 @@
             
             [weakSelf refreshStatusBarOrientation:UIInterfaceOrientationPortrait];
             
-//            [[UIApplication sharedApplication] setStatusBarStyle:weakPlayer.oldStyle];
+            //            [[UIApplication sharedApplication] setStatusBarStyle:weakPlayer.oldStyle];
         }
     }];
 }
