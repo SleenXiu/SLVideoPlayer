@@ -8,9 +8,10 @@
     [self.view addSubview:player];
     [player playVideoWithStr:@"https://video.deeppp.com/7325faf9ca1b483f7c111986f2764a68"];
 ```
+
 - TODO
  
- - 全屏顶部nav返回 ☆
- - 弱网提示 ☆
- - 弹幕支持 ☆☆☆
- - 等
+  - 全屏顶部nav返回 ☆
+  - 弱网提示 ☆
+  - 弹幕支持 ☆☆☆
+  - 等
