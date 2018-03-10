@@ -61,73 +61,9 @@
     [super layoutSubviews];
     
 }
-- (void)fullScreenButtonClick:(UIButton *)fullBtn {
-    if (!self.fullScreenBlock) {
-        return;
-    }
-    fullBtn.selected = !fullBtn.selected;
-    NSLog(@"%f", _playerItem.presentationSize.width);
-    if (_playerItem.presentationSize.width > _playerItem.presentationSize.height) {
-        _showType = SLVideoViewShowTypeHorizontal;
-    } else {
-        _showType = SLVideoViewShowTypeVertical;
-    }
-    
-    if (_fullScreenBlock) {
-        _fullScreenBlock(fullBtn);
-    }
-    self.time.fireDate = [NSDate dateWithTimeInterval:3 sinceDate:[NSDate date]];
-}
-- (void)addFullScreenBlock:(fullScreenClickBlock)block {
-    _fullScreenBlock = block;
-}
-- (void)updateWidgetsShow {
-    CGFloat playerW = self.frame.size.width;
-    CGFloat playerH = self.frame.size.height;
-    
-    if (_showType == SLVideoViewShowTypeNormal) {
-        
-        self.playOrPauseButton.frame = CGRectMake((playerW-72)/2, (playerH-72)/2, 72, 72);
-        [self.playOrPauseButton setBackgroundImage:[SLVideoPlayerUtil sl_getImageFromBundle:@"play_normal"] forState:UIControlStateNormal];
-        [self.playOrPauseButton setBackgroundImage:[SLVideoPlayerUtil sl_getImageFromBundle:@"pause_normal"] forState:UIControlStateSelected];
-        
-        
-        CGFloat toolViewH = 29;
-        
-        self.toolBarView.frame = CGRectMake(0, playerH-toolViewH, playerW, toolViewH);
-        [self.toolBarView setNeedsUpdateConstraints];
-        
-        
-        _indicatorView.center = CGPointMake((playerW)/2, (playerH)/2);
-        
-        if (_fullHiden) {
-            _allTimeLabel.frame = CGRectMake(playerW - 46, (toolViewH-17)/2, 46, 17);
-            
-            _bufferProgress.frame = CGRectMake(46, (toolViewH-2)/2, playerW  - 46*2, 2);
-            _progressSlider.frame = CGRectMake(46-4, (toolViewH-8)/2, playerW  - 46*2+8, 8);
-        }
-        
-    } else if (_showType == SLVideoViewShowTypeHorizontal) {
-        
-        self.playOrPauseButton.frame = CGRectMake((playerH-100)/2, (playerW-100)/2, 100, 100);
-        
-        CGFloat toolViewH = 55;
-        self.toolBarView.frame = CGRectMake(0, playerW-toolViewH, playerH, toolViewH);
-        
-        _indicatorView.center = CGPointMake((playerH)/2, (playerW)/2);
-    } else {
-        
-        self.playOrPauseButton.frame = CGRectMake((playerW-100)/2, (playerH-100)/2, 100, 100);
-        
-        CGFloat toolViewH = 55;
-        self.toolBarView.frame = CGRectMake(0, playerH-toolViewH, playerH, toolViewH);
-        _indicatorView.center = CGPointMake((playerW)/2, (playerH)/2);
-    }
-}
-- (void)hideFullScreenButton {
-    self.fullScreenButton.hidden = YES;
-    
-    _fullHiden = YES;
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    [self updateWidgetsShow];
 }
 #pragma mark - public
 - (void)playVideoWithStr:(NSString *)videoStr needAutoPlay:(BOOL)autoPlay {
@@ -135,7 +71,6 @@
         [self.player replaceCurrentItemWithPlayerItem:nil];
         return;
     }
-    
     
     NSURL *url = [NSURL URLWithString:videoStr];
     
@@ -163,6 +98,87 @@
 - (void)playVideoWithStr:(NSString *)videoStr {
     [self playVideoWithStr:videoStr needAutoPlay:NO];
 }
+- (void)updateWidgetsShow {
+    CGFloat playerW = self.frame.size.width;
+    CGFloat playerH = self.frame.size.height;
+    
+    if (_showType == SLVideoViewShowTypeNormal) {
+        
+        self.playOrPauseButton.frame = CGRectMake((playerW-72)/2, (playerH-72)/2, 72, 72);
+        
+        CGFloat toolViewH = 29;
+        
+        self.toolBarView.frame = CGRectMake(0, playerH-toolViewH, playerW, toolViewH);
+        
+        _indicatorView.center = CGPointMake((playerW)/2, (playerH)/2);
+        
+        self.toolBarView.allTimeLabel.font = [UIFont systemFontOfSize:12];
+        self.toolBarView.currentTimeLabel.font = [UIFont systemFontOfSize:12];
+    } else if (_showType == SLVideoViewShowTypeHorizontal) {
+        
+        self.playOrPauseButton.frame = CGRectMake((playerH-100)/2, (playerW-100)/2, 100, 100);
+        
+        CGFloat toolViewH = 55;
+        self.toolBarView.frame = CGRectMake(0, playerW-toolViewH, playerH, toolViewH);
+        
+        _indicatorView.center = CGPointMake((playerH)/2, (playerW)/2);
+        self.toolBarView.allTimeLabel.font = [UIFont systemFontOfSize:14];
+        self.toolBarView.currentTimeLabel.font = [UIFont systemFontOfSize:14];
+    } else {
+        
+        self.playOrPauseButton.frame = CGRectMake((playerW-100)/2, (playerH-100)/2, 100, 100);
+        
+        CGFloat toolViewH = 55;
+        self.toolBarView.frame = CGRectMake(0, playerH-toolViewH, playerH, toolViewH);
+        _indicatorView.center = CGPointMake((playerW)/2, (playerH)/2);
+        self.toolBarView.allTimeLabel.font = [UIFont systemFontOfSize:14];
+        self.toolBarView.currentTimeLabel.font = [UIFont systemFontOfSize:14];
+    }
+}
+- (void)clearAllTimeObserver {
+    [_player removeTimeObserver:_playTimeObserver];
+    _playTimeObserver = nil;
+    
+    [self.time invalidate];
+    self.time = nil;
+}
+- (void)pauseVideo {
+    [self.player pause];
+    _isPlaying = NO;
+    
+    //    toolView.hidden = NO;
+    self.toolBarView.hidden = NO;
+    self.playOrPauseButton.hidden = NO;
+    [self.time setFireDate:[NSDate distantFuture]];
+    
+    [SLVideoPlayerManager shareManager].currentPlayer = nil;
+    [self.indicatorView stopAnimating];
+    
+    self.playOrPauseButton.selected = NO;
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        [[AVAudioSession sharedInstance] setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
+    });
+}
+- (void)playVideo {
+    [self.player play];
+    _isPlaying = YES;
+    
+    //    _toolView.hidden = YES;
+    self.toolBarView.hidden = YES;
+    self.playOrPauseButton.hidden = YES;
+    self.playOrPauseButton.selected = YES;
+    self.time.fireDate = [NSDate dateWithTimeInterval:3 sinceDate:[NSDate date]];
+    
+    if ([SLVideoPlayerManager shareManager].currentPlayer) {
+        [[SLVideoPlayerManager shareManager].currentPlayer pauseVideo];
+    }
+    [SLVideoPlayerManager shareManager].currentPlayer = self;
+    
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        [[AVAudioSession sharedInstance] setActive:YES error:nil];
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+    });
+}
 #pragma mark - event
 - (void)playOrPauseButtonClick:(UIButton *)playBtn {
     playBtn.selected = !playBtn.selected;
@@ -171,8 +187,9 @@
         [self.player play];
         _isPlaying = YES;
         
-        _toolView.hidden = YES;
-        _playOrPauseButton.hidden = YES;
+//        _toolView.hidden = YES;
+        self.toolBarView.hidden = YES;
+        self.playOrPauseButton.hidden = YES;
         self.time.fireDate = [NSDate dateWithTimeInterval:3 sinceDate:[NSDate date]];
     
         if (shareManager.currentPlayer) {
@@ -220,7 +237,7 @@
 
 #pragma mark - SLVideoPlayerToolBarDelegate
 - (void)barPlayerSliderTouchUpInside {
-    _isPlaying = NO;
+    _isPlaying = YES;
     [self.player play];
 }
 - (void)barProgressSliderTouchDown {
@@ -236,9 +253,84 @@
         if (finished) { // 跳转完成后做某事
             [self.player play];
             self.time.fireDate = [NSDate dateWithTimeInterval:3 sinceDate:[NSDate date]];
+            self.playOrPauseButton.selected = YES;
+            self.playOrPauseButton.hidden = YES;
             _isSliding = NO;
         }
     }];
+}
+- (void)barFullScreenButtonClick:(UIButton *)fullScreenButton {
+    fullScreenButton.selected = !fullScreenButton.selected;
+    if (_playerItem.presentationSize.width > _playerItem.presentationSize.height) {
+        _showType = SLVideoViewShowTypeHorizontal;
+    } else {
+        _showType = SLVideoViewShowTypeVertical;
+    }
+    
+    if (fullScreenButton.selected) {
+        if(_showType == SLVideoViewShowTypeHorizontal){
+            self.normalFrame = self.frame;
+            self.normalParentView = self.superview;
+            
+            CGRect rectInWindow = [self.superview convertRect:self.frame toView:[UIApplication sharedApplication].keyWindow];
+            [self removeFromSuperview];
+            self.frame = rectInWindow;
+            [[UIApplication sharedApplication].keyWindow addSubview:self];
+            
+            [UIView animateWithDuration:0.5 animations:^{
+                self.transform = CGAffineTransformMakeRotation(M_PI_2);
+                self.bounds = CGRectMake(0, 0, CGRectGetHeight(self.superview.bounds), CGRectGetWidth(self.superview.bounds));
+                self.center = CGPointMake(CGRectGetMidX(self.superview.bounds), CGRectGetMidY(self.superview.bounds));
+                
+                [self updateWidgetsShow];
+            } completion:^(BOOL finished) {
+            }];
+            [self refreshStatusBarOrientation:UIInterfaceOrientationLandscapeRight];
+            
+        } else {
+            self.normalFrame = self.frame;
+            self.normalParentView = self.superview;
+            
+            CGRect rectInWindow = [self.superview convertRect:self.frame toView:[UIApplication sharedApplication].keyWindow];
+            [self removeFromSuperview];
+            self.frame = rectInWindow;
+            [[UIApplication sharedApplication].keyWindow addSubview:self];
+            
+            [UIView animateWithDuration:0.5 animations:^{
+                self.bounds = CGRectMake(0, 0, CGRectGetWidth(self.superview.bounds), CGRectGetHeight(self.superview.bounds));
+                self.center = CGPointMake(CGRectGetMidX(self.superview.bounds), CGRectGetMidY(self.superview.bounds));
+                
+                [self updateWidgetsShow];
+            } completion:^(BOOL finished) {
+            }];
+        }
+    } else {
+        CGRect frame = [self.normalParentView convertRect:self.normalFrame toView:[UIApplication sharedApplication].keyWindow];
+        [UIView animateWithDuration:0.5 animations:^{
+            
+            self.transform = CGAffineTransformIdentity;
+            self.frame = frame;
+            self.showType = SLVideoViewShowTypeNormal;
+            [self updateWidgetsShow];
+            
+        } completion:^(BOOL finished) {
+            
+            [self removeFromSuperview];
+            self.frame = self.normalFrame;
+            [self.normalParentView addSubview:self];
+        }];
+        
+        [self refreshStatusBarOrientation:UIInterfaceOrientationPortrait];
+        
+        //            [[UIApplication sharedApplication] setStatusBarStyle:self.oldStyle];
+    }
+    
+    self.time.fireDate = [NSDate dateWithTimeInterval:3 sinceDate:[NSDate date]];
+}
+- (void)refreshStatusBarOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    [[UIApplication sharedApplication] setStatusBarOrientation:interfaceOrientation animated:YES];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:YES];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
 #pragma mark - dealloc
@@ -257,7 +349,6 @@
     });
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
 }
 #pragma mark - obserce
 - (void)addObservers {
@@ -290,8 +381,6 @@
 }
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     AVPlayerItem *playerItem = (AVPlayerItem *)object;
-    
-    
     if ([keyPath isEqualToString:@"status"]) {
         AVPlayerStatus status = [[change objectForKey:@"new"] intValue]; // 获取更改后的状态
         if (status == AVPlayerStatusReadyToPlay) {
@@ -402,8 +491,9 @@
 - (void)hideToolViewAndPlayButton {
     if (_isPlaying) {
         //在这里执行事件
-        _toolView.hidden = YES;
-        _playOrPauseButton.hidden = YES;
+//        _toolView.hidden = YES;
+        self.toolBarView.hidden = YES;
+        self.playOrPauseButton.hidden = YES;
     }
 }
 - (NSTimer *)time {
@@ -413,59 +503,18 @@
     }
     return _time;
 }
-- (void)clearAllTimeObserver {
-    [_player removeTimeObserver:_playTimeObserver];
-    _playTimeObserver = nil;
-    
-    [self.time invalidate];
-    self.time = nil;
-}
-- (void)pauseVideo {
-    [self.player pause];
-    _isPlaying = NO;
-    
-    _toolView.hidden = NO;
-    _playOrPauseButton.hidden = NO;
-    [self.time setFireDate:[NSDate distantFuture]];
-    
-    [SLVideoPlayerManager shareManager].currentPlayer = nil;
-    [self.indicatorView stopAnimating];
-    
-    self.playOrPauseButton.selected = NO;
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        [[AVAudioSession sharedInstance] setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
-    });
-}
-- (void)playVideo {
-    [self.player play];
-    _isPlaying = YES;
-    
-    _toolView.hidden = YES;
-    _playOrPauseButton.hidden = YES;
-    self.playOrPauseButton.selected = YES;
-    self.time.fireDate = [NSDate dateWithTimeInterval:3 sinceDate:[NSDate date]];
-    
-    if ([SLVideoPlayerManager shareManager].currentPlayer) {
-        [[SLVideoPlayerManager shareManager].currentPlayer pauseVideo];
-    }
-    [SLVideoPlayerManager shareManager].currentPlayer = self;
-    
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        [[AVAudioSession sharedInstance] setActive:YES error:nil];
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-    });
-}
+
 - (void)postBarrageClick {
     
-    if (self.action) {
-        [self fullScreenButtonClick:_fullScreenButton];
-        [self pauseVideo];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            UIImage *im = [UIImage new];
-            self.action([self getCurrentImage], CMTimeGetSeconds(_playerItem.currentTime));
-        });
-        
-    }
+//    if (self.action) {
+//        [self fullScreenButtonClick:_fullScreenButton];
+//        [self pauseVideo];
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+////            UIImage *im = [UIImage new];
+//            self.action([self getCurrentImage], CMTimeGetSeconds(_playerItem.currentTime));
+//        });
+//
+//    }
 }
 - (void)setPostBarrageAction:(SLVideoPlayerPostBarragesAction)action {
     self.action = action;

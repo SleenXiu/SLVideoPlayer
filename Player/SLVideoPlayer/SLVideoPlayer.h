@@ -10,7 +10,6 @@
 #import "SLVideoPlayerToolBar.h"
 @import AVFoundation;
 
-typedef void (^fullScreenClickBlock)(UIButton *fullScreenBtn);
 typedef void (^SLVideoPlayerPostBarragesAction)(UIImage *image, CGFloat seconds);
 typedef void (^SLVideoPlayerPlayHandler)(BOOL playing);
 typedef void (^SLVideoPlayerShareBlock)(void);
@@ -33,12 +32,6 @@ typedef NS_ENUM(NSUInteger, SLVideoViewShowType) {
 
 /** 底部工具栏 */
 @property (nonatomic, strong) SLVideoPlayerToolBar *toolBarView;
-@property (nonatomic, strong) UIView *toolView;
-@property (nonatomic, strong) UIProgressView *bufferProgress;    ///< 缓冲进度条
-@property (nonatomic, strong) UISlider *progressSlider;  ///< 播放进度条
-@property (nonatomic, strong) UILabel *currentTimeLabel;     ///< 播放时间
-@property (nonatomic, strong) UILabel *allTimeLabel;         ///< 时间总长
-@property (nonatomic, strong) UIButton *fullScreenButton;    ///< 全屏按钮
 @property (nonatomic, strong) UILabel *barrageLabel;
 
 @property (nonatomic, strong) UIView *topNavView;
@@ -56,16 +49,11 @@ typedef NS_ENUM(NSUInteger, SLVideoViewShowType) {
 
 @property (nonatomic, assign) SLVideoViewShowType showType;
 
-
-@property (nonatomic, copy) fullScreenClickBlock fullScreenBlock;
-- (void)addFullScreenBlock:(fullScreenClickBlock)block;
 - (void)updateWidgetsShow;
 - (void)playVideoWithStr:(NSString *)videoStr;
+- (void)playVideoWithStr:(NSString *)videoStr needAutoPlay:(BOOL)autoPlay;
 - (void)clearAllTimeObserver;
 - (void)pauseVideo;
-
-- (void)playVideoWithStr:(NSString *)videoStr needAutoPlay:(BOOL)autoPlay;
-- (void)hideFullScreenButton;
 
 @property (nonatomic, assign) CGRect normalFrame;
 @property (nonatomic, weak) UIView *normalParentView;
@@ -74,9 +62,9 @@ typedef NS_ENUM(NSUInteger, SLVideoViewShowType) {
 @property (nonatomic, copy) SLVideoPlayerPostBarragesAction action;
 - (void)setPostBarrageAction:(SLVideoPlayerPostBarragesAction)action;
 - (UIImage *)getCurrentImage;
-
 @property (nonatomic, copy) SLVideoPlayerPlayHandler playHandler;
 - (void)showBarragesWithDict:(NSDictionary *)dict;
+
 
 @property (nonatomic, assign) UIStatusBarStyle oldStyle;
 

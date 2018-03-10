@@ -53,7 +53,7 @@
                                                                               relatedBy:NSLayoutRelationEqual
                                                                                  toItem:nil
                                                                               attribute:NSLayoutAttributeNotAnAttribute
-                                                                             multiplier:1.0 constant:46];
+                                                                             multiplier:1.0 constant:52];
     [self addConstraints:@[currentTimeLabel_left, currentTimeLabel_centerY, currentTimeLabel_width]];
     
     
